@@ -1,5 +1,5 @@
 {% set name = "Keras" %}
-{% set version = "2.2.0" %}
+{% set version = "2.2.2" %}
 
 package:
   name: keras_split
@@ -8,7 +8,7 @@ package:
 source:
   fn: {{ name }}-{{ version }}.tar.gz
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 5b8499d157af217f1a5ee33589e774127ebc3e266c833c22cb5afbb0ed1734bf
+  sha256: 468d98da104ec5c3dbb10c2ef6bb345ab154f6ca2d722d4c250ef4d6105de17a
 
 build:
   number: 0
@@ -31,8 +31,8 @@ outputs:
         - six >=1.9.0
         - pyyaml
         - h5py
-        - keras-applications 1.0.2
-        - keras-preprocessing 1.0.1
+        - keras-applications 1.0.4
+        - keras-preprocessing 1.0.2
       # add run_constrained to prevent installation of mismatched keras and
       # keras-base packages
       run_constrained:
