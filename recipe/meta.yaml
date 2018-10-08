@@ -1,5 +1,5 @@
 {% set name = "Keras" %}
-{% set version = "2.2.2" %}
+{% set version = "2.2.4" %}
 
 package:
   name: keras_split
@@ -8,18 +8,22 @@ package:
 source:
   fn: {{ name }}-{{ version }}.tar.gz
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 468d98da104ec5c3dbb10c2ef6bb345ab154f6ca2d722d4c250ef4d6105de17a
+  sha256: 90b610a3dbbf6d257b20a079eba3fdf2eed2158f64066a7c6f7227023fd60bc9
 
-build:
-  number: 0
-  # Tensorflow is not available on all platforms, skip those where it is not
-  skip: True  # [win32 or linux32]
-  skip: True  # [win64 and py27]
-
+  build:
+    number: 0
+    # skip platforms without tensorflow
+    skip: True  # [win32 or linux32 or ppc64le]
 
 outputs:
   - name: keras-base
-    script: install_base.sh
+    script: install_base.sh  # [not win]
+    script: install_base.bat # [win]
+    build:
+      number: 0
+      # platforms/python versions without tensorflow support
+      skip: True  # [win64 and py27]
+      skip: True  # [py == 37]
     requirements:
       build:
         - python
@@ -31,8 +35,8 @@ outputs:
         - six >=1.9.0
         - pyyaml
         - h5py
-        - keras-applications 1.0.4
-        - keras-preprocessing 1.0.2
+        - keras-applications >=1.0.6
+        - keras-preprocessing >=1.0.5
       # add run_constrained to prevent installation of mismatched keras and
       # keras-base packages
       run_constrained:
