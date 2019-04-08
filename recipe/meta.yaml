@@ -23,7 +23,6 @@ outputs:
       number: 0
       # platforms/python versions without tensorflow support
       skip: True  # [win64 and py27]
-      skip: True  # [py == 37]
     requirements:
       build:
         - python
