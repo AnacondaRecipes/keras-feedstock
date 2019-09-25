@@ -1,5 +1,5 @@
 {% set name = "Keras" %}
-{% set version = "2.2.4" %}
+{% set version = "2.3.0" %}
 
 package:
   name: keras_split
@@ -8,7 +8,7 @@ package:
 source:
   fn: {{ name }}-{{ version }}.tar.gz
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 90b610a3dbbf6d257b20a079eba3fdf2eed2158f64066a7c6f7227023fd60bc9
+  sha256: a0d6ecf1d71cd0b85ea1da27ea7314a9d4723f5b468b7cedd87dcad0a491b354
 
   build:
     number: 0
@@ -94,10 +94,10 @@ outputs:
       doc_url: http://keras.io
       dev_url: https://github.com/fchollet/keras
 
-
-
 extra:
   recipe-maintainers:
     - ericdill
     - mariusvniekerk
     - croth1
+    - ocefpaf
+    - jjhelmus
