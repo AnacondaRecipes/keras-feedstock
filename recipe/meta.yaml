@@ -1,6 +1,12 @@
 {% set name = "Keras" %}
 {% set version = "2.3.1" %}
 
+#  NOTE: this recipe has problems with long paths on windows:
+#  conda.CondaMultiError: The package for tensorflow-base located at C:\ci\containers\00000tc3o9d\tmp\build\80754af9\build_env\pkgs\tensorflow-base-2.1.0-eigen_py37h49b2757_0
+# appears to be corrupted. The path 'Lib/site-packages/tensorflow-2.1.0.data/purelib/tensorflow_core/include/tensorflow_core/core/grappler/optimizers/generic_layout_optimizer_transposer_factory.h'
+#
+# You may need to build this manually so that you can have a shorter base path.
+#
 package:
   name: keras_split
   version: {{ version }}
@@ -13,7 +19,13 @@ source:
 build:
   number: 0
   # skip platforms without tensorflow
-  skip: True  # [win32 or linux32 or ppc64le]
+  skip: True  # [win32 or linux32 or ppc64le or py>37]
+
+requirements:
+  host:
+    - python
+  run:
+    - python
 
 outputs:
   - name: keras-base
