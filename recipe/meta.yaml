@@ -20,13 +20,12 @@ outputs:
     script: install_base.sh  # [not win]
     script: install_base.bat # [win]
     build:
-      number: 0
       # platforms/python versions without tensorflow support
       skip: True  # [win64 and py27]
     requirements:
       build:
         - python
-        - setuptools
+        - pip
       run:
         - python
         - numpy >=1.9.1
