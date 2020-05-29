@@ -19,7 +19,7 @@ source:
 build:
   number: 0
   # skip platforms without tensorflow
-  skip: True  # [win32 or linux32 or ppc64le or py>37]
+  skip: True  # [win32 or linux32 or ppc64le]
 
 requirements:
   host:
