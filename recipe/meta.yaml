@@ -1,71 +1,51 @@
-{% set name = "Keras" %}
-{% set version = "2.3.1" %}
+{% set version = "2.4.3" %}
 
-#  NOTE: this recipe has problems with long paths on windows:
-#  conda.CondaMultiError: The package for tensorflow-base located at C:\ci\containers\00000tc3o9d\tmp\build\80754af9\build_env\pkgs\tensorflow-base-2.1.0-eigen_py37h49b2757_0
-# appears to be corrupted. The path 'Lib/site-packages/tensorflow-2.1.0.data/purelib/tensorflow_core/include/tensorflow_core/core/grappler/optimizers/generic_layout_optimizer_transposer_factory.h'
-#
-# You may need to build this manually so that you can have a shorter base path.
-#
 package:
   name: keras_split
   version: {{ version }}
 
 source:
-  fn: {{ name }}-{{ version }}.tar.gz
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 321d43772006a25a1d58eea17401ef2a34d388b588c9f7646c34796151ebc8cc
+  url: https://pypi.io/packages/source/K/Keras/Keras-{{ version }}.tar.gz
+  sha256: fedd729b52572fb108a98e3d97e1bac10a81d3917d2103cc20ab2a5f03beb973
 
 build:
   number: 0
-  # skip platforms without tensorflow
-  skip: True  # [win32 or linux32 or ppc64le]
-
-requirements:
-  host:
-    - python
-  run:
-    - python
 
 outputs:
   - name: keras-base
     script: install_base.sh  # [not win]
     script: install_base.bat # [win]
     build:
-      # platforms/python versions without tensorflow support
-      skip: True  # [win64 and py27]
+      noarch: python
     requirements:
       build:
-        - python
+        - python >=3.6
         - pip
       run:
-        - python
+        - python >=3.6
         - numpy >=1.9.1
         - scipy >=0.14
-        - six >=1.9.0
         - pyyaml
         - h5py
-        - keras-applications >=1.0.6
-        - keras-preprocessing >=1.0.5
+        - tensorflow >=2.2
       # add run_constrained to prevent installation of mismatched keras and
       # keras-base packages
       run_constrained:
         - keras {{ version }}
     test:
-      requires:
-        - tensorflow
       imports:
         - keras
         - keras.backend
         - keras.datasets
         - keras.engine
         - keras.layers
-        - keras.legacy
         - keras.preprocessing
         - keras.utils
         - keras.wrappers
 
   - name: keras
+    build:
+      noarch: true
     requirements:
       run:
         - keras-base {{ version }}
@@ -86,6 +66,8 @@ outputs:
       dev_url: https://github.com/fchollet/keras
 
   - name: keras-gpu
+    build:
+      noarch: true
     requirements:
       run:
         - keras-base {{ version }}
