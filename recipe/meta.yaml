@@ -52,8 +52,9 @@ outputs:
         # - keras.wrappers
 
   - name: keras
+    script: install_base.sh  # [not win]
+    script: install_base.bat # [win]
     build:
-      script: python -m pip install -vv keras-{{ version }}-py2.py3-none-any.whl
       noarch: true
     requirements:
       host:
