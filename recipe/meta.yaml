@@ -51,7 +51,7 @@ outputs:
         - keras.preprocessing
         - keras.utils
         - keras.wrappers
-
+ #some of the imports are commented out during testing to avoid circular dependencies
   - name: keras
     script: install_base.sh  # [not win]
     script: install_base.bat  # [win]
@@ -65,8 +65,6 @@ outputs:
         - wheel
       run:
         - python >=3.6
-      run_constrained:
-        - tensorflow
     test:
       requires:
         - pip
