@@ -1,3 +1,2 @@
 #!/bin/bash
-version=2.6.0
-python -m pip install -vv keras-$version-py2.py3-none-any.whl
+python -m pip install -vv keras-$PKG_VERSION-py2.py3-none-any.whl
