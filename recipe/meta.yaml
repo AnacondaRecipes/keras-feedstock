@@ -32,7 +32,7 @@ outputs:
         - scipy >=0.14
         - pyyaml
         - h5py
-        - tensorflow  
+        - tensorflow {{ version }}  
       # add run_constrained to prevent installation of mismatched keras and
       # keras-base packages
       run_constrained:
@@ -65,6 +65,8 @@ outputs:
         - wheel
       run:
         - python >=3.6
+      run_constrained:
+        - tensorflow {{ version }}
     test:
       requires:
         - pip
