@@ -1,38 +1,47 @@
-{% set version = "2.4.3" %}
+{% set version = "2.6.0" %}
 
 package:
   name: keras_split
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/K/Keras/Keras-{{ version }}.tar.gz
-  sha256: fedd729b52572fb108a98e3d97e1bac10a81d3917d2103cc20ab2a5f03beb973
+  - url: https://pypi.io/packages/py2.py3/k/keras/keras-{{ version }}-py2.py3-none-any.whl
+    sha256: 504af5656a9829fe803ce48a8580ef16916e89906aceddad9e098614269437e7
+  - url: https://raw.githubusercontent.com/keras-team/keras/v{{ version }}/LICENSE
+    sha256: ebc07b279109d4bd5e58fe06f54e8f8aee8ba1024b77b222bc04214ae6f56348
 
 build:
+  noarch: python
   number: 0
 
 outputs:
   - name: keras-base
     script: install_base.sh  # [not win]
-    script: install_base.bat # [win]
+    script: install_base.bat  # [win]
     build:
       noarch: python
     requirements:
-      build:
+      host:
         - python >=3.6
         - pip
+        - setuptools
+        - wheel
       run:
         - python >=3.6
         - numpy >=1.9.1
         - scipy >=0.14
         - pyyaml
         - h5py
-        - tensorflow >=2.2
+        - tensorflow {{ version }}  
       # add run_constrained to prevent installation of mismatched keras and
       # keras-base packages
       run_constrained:
         - keras {{ version }}
     test:
+      requires:
+        - pip
+      commands:
+        - pip check
       imports:
         - keras
         - keras.backend
@@ -42,14 +51,27 @@ outputs:
         - keras.preprocessing
         - keras.utils
         - keras.wrappers
-
+ #some of the imports are commented out during testing to avoid circular dependencies
   - name: keras
+    script: install_base.sh  # [not win]
+    script: install_base.bat  # [win]
     build:
-      noarch: true
+      noarch: python
     requirements:
+      host:
+        - python >=3.6
+        - pip
+        - setuptools
+        - wheel
       run:
-        - keras-base {{ version }}
-        - tensorflow
+        - python >=3.6
+      run_constrained:
+        - tensorflow {{ version }}
+    test:
+      requires:
+        - pip
+      commands:
+        - pip check
     about:
       home: https://github.com/fchollet/keras
       license: MIT
