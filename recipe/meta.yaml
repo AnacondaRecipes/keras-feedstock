@@ -56,7 +56,7 @@ outputs:
     script: install_base.sh  # [not win]
     script: install_base.bat  # [win]
     build:
-      noarch: true
+      noarch: python
     requirements:
       host:
         - python >=3.6
