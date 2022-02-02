@@ -22,7 +22,7 @@ outputs:
       noarch: python
     requirements:
       host:
-        - python >=3.6
+        - python
         - pip
         - setuptools
         - wheel
@@ -59,7 +59,7 @@ outputs:
       noarch: python
     requirements:
       host:
-        - python >=3.6
+        - python
         - pip
         - setuptools
         - wheel
