@@ -1,2 +1,2 @@
 #!/bin/bash
-python -m pip install -vv keras-$PKG_VERSION-py2.py3-none-any.whl
+python -m pip install -vv $PKG_NAME-$PKG_VERSION-py3-none-any.whl

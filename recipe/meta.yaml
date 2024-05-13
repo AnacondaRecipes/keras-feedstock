@@ -1,33 +1,32 @@
-{% set version = "2.6.0" %}
+{% set name = "keras" %}
+{% set version = "3.0.5" %}
 
 package:
   name: keras_split
   version: {{ version }}
 
 source:
-  - url: https://pypi.io/packages/py2.py3/k/keras/keras-{{ version }}-py2.py3-none-any.whl
-    sha256: 504af5656a9829fe803ce48a8580ef16916e89906aceddad9e098614269437e7
+  - url: https://pypi.io/packages/py3/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}-py3-none-any.whl
+    sha256: 4a022f2e97ea5a3db12ed809ffcb7ce1ef8d34feaeac52315ec8553ded2dcf97
   - url: https://raw.githubusercontent.com/keras-team/keras/v{{ version }}/LICENSE
-    sha256: ebc07b279109d4bd5e58fe06f54e8f8aee8ba1024b77b222bc04214ae6f56348
+    sha256: 43070e2d4e532684de521b885f385d0841030efa2b1a20bafb76133a5e1379c1
 
 build:
-  noarch: python
   number: 0
 
 outputs:
   - name: keras-base
     script: install_base.sh  # [not win]
     script: install_base.bat  # [win]
-    build:
-      noarch: python
     requirements:
       host:
         - python
         - pip
         - setuptools
         - wheel
+        - pkg-config
       run:
-        - python >=3.6
+        - python
         - numpy >=1.9.1
         - scipy >=0.14
         - pyyaml
