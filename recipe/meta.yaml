@@ -12,7 +12,8 @@ source:
 build:
   number: 0
   script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-build-isolation -vvv
-  skip: true # [py<39]
+  # skipping s390x since dm-tree and jax are not available
+  skip: true # [py<39 or s390x]
 
 requirements:
   host:
@@ -39,12 +40,12 @@ requirements:
 test:
   requires:
     - pip
-    - jax
+    - jax  # [not win]
     - pytorch
   commands:
     - pip check
     - KERAS_BACKEND=numpy python -c "import keras"
-    - KERAS_BACKEND=jax python -c "import keras"
+    - KERAS_BACKEND=jax python -c "import keras"  # [not win]
     - KERAS_BACKEND=torch python -c "import keras" 
 
 about:
