@@ -2,111 +2,65 @@
 {% set version = "3.0.5" %}
 
 package:
-  name: keras_split
+  name: keras
   version: {{ version }}
 
 source:
-  - url: https://pypi.io/packages/py3/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}-py3-none-any.whl
-    sha256: 4a022f2e97ea5a3db12ed809ffcb7ce1ef8d34feaeac52315ec8553ded2dcf97
-  - url: https://raw.githubusercontent.com/keras-team/keras/v{{ version }}/LICENSE
-    sha256: 43070e2d4e532684de521b885f385d0841030efa2b1a20bafb76133a5e1379c1
+  url: https://github.com/keras-team/keras/archive/refs/tags/v{{ version }}.tar.gz
+  sha256: 0e23205f2d8f434ded17ca9efb116cdb7b6d19736e576456c28aea685a7f195f
 
 build:
   number: 0
+  script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-build-isolation -vvv
+  skip: true # [py<39]
 
-outputs:
-  - name: keras-base
-    script: install_base.sh  # [not win]
-    script: install_base.bat  # [win]
-    requirements:
-      host:
-        - python
-        - pip
-        - setuptools
-        - wheel
-        - pkg-config
-      run:
-        - python
-        - numpy >=1.9.1
-        - scipy >=0.14
-        - pyyaml
-        - h5py
-        - tensorflow {{ version }}  
-      # add run_constrained to prevent installation of mismatched keras and
-      # keras-base packages
-      run_constrained:
-        - keras {{ version }}
-    test:
-      requires:
-        - pip
-      commands:
-        - pip check
-      imports:
-        - keras
-        - keras.backend
-        - keras.datasets
-        - keras.engine
-        - keras.layers
-        - keras.preprocessing
-        - keras.utils
-        - keras.wrappers
- #some of the imports are commented out during testing to avoid circular dependencies
-  - name: keras
-    script: install_base.sh  # [not win]
-    script: install_base.bat  # [win]
-    build:
-      noarch: python
-    requirements:
-      host:
-        - python
-        - pip
-        - setuptools
-        - wheel
-      run:
-        - python >=3.6
-      run_constrained:
-        - tensorflow {{ version }}
-    test:
-      requires:
-        - pip
-      commands:
-        - pip check
-    about:
-      home: https://github.com/fchollet/keras
-      license: MIT
-      license_family: MIT
-      license_file: LICENSE
-      summary: Deep Learning Library for Theano and TensorFlow
-      description: |
-        Keras is a minimalist, highly modular neural networks library
-        written in Python and capable on running on top of either
-        TensorFlow or Theano. It was developed with a focus on enabling
-        fast experimentation. Being able to go from idea to result with
-        the least possible delay is key to doing good research.
-      doc_url: http://keras.io
-      dev_url: https://github.com/fchollet/keras
+requirements:
+  host:
+    - python
+    - pip
+    - wheel
+    - setuptools
+  run:
+    - python
+    - absl-py
+    - numpy
+    - rich
+    - namex
+    - h5py
+    - ml_dtypes
+    - packaging
+    - dm-tree
 
-  - name: keras-gpu
-    build:
-      noarch: true
-    requirements:
-      run:
-        - keras-base {{ version }}
-        - tensorflow-gpu
-    about:
-      home: https://github.com/fchollet/keras
-      license: MIT
-      license_family: MIT
-      license_file: LICENSE
-      summary: Deep Learning Library for Theano and TensorFlow
-      description: |
-        Keras is a minimalist, highly modular neural networks library
-        written in Python and capable on running on top of either
-        TensorFlow or Theano. It was developed with a focus on enabling
-        fast experimentation. Being able to go from idea to result with
-        the least possible delay is key to doing good research.
-      doc_url: http://keras.io
-      dev_url: https://github.com/fchollet/keras
+  run_constrained:
+    - tensorflow >=2.15.0,<2.17.0a
+    - jax 0.4.*
+    - pytorch >=2.1,<2.3
+
+test:
+  requires:
+    - pip
+    - jax
+    - pytorch
+  commands:
+    - pip check
+    - KERAS_BACKEND=numpy python -c "import keras"
+    - KERAS_BACKEND=jax python -c "import keras"
+    - KERAS_BACKEND=torch python -c "import keras" 
+
+about:
+  home: https://github.com/fchollet/keras
+  license: MIT
+  license_family: MIT
+  license_file: LICENSE
+  summary: Deep Learning Library for Theano and TensorFlow
+  description: |
+    Keras is a minimalist, highly modular neural networks library
+    written in Python and capable on running on top of either
+    TensorFlow or Theano. It was developed with a focus on enabling
+    fast experimentation. Being able to go from idea to result with
+    the least possible delay is key to doing good research.
+  doc_url: http://keras.io
+  dev_url: https://github.com/fchollet/keras
 
 extra:
   recipe-maintainers:
