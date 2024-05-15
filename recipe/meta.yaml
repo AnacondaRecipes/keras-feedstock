@@ -38,7 +38,7 @@ requirements:
     - pytorch >=2.1,<2.3
 
 test:
-  import:
+  imports:
     - keras
     - keras.backend
     - keras.datasets
