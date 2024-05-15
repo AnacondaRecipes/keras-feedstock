@@ -44,9 +44,9 @@ test:
     - pytorch
   commands:
     - pip check
-    - KERAS_BACKEND=numpy python -c "import keras"
-    - KERAS_BACKEND=jax python -c "import keras"  # [not win]
-    - KERAS_BACKEND=torch python -c "import keras" 
+    - python -c "import os; os.environ['KERAS_BACKEND'] = 'numpy'; import keras;"
+    - python -c "import os; os.environ['KERAS_BACKEND'] = 'jax'; import keras;"  # [not win]
+    - python -c "import os; os.environ['KERAS_BACKEND'] = 'torch'; import keras;"
 
 about:
   home: https://github.com/fchollet/keras
