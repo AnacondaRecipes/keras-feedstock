@@ -38,6 +38,8 @@ requirements:
     - pytorch >=2.1,<2.3
 
 test:
+  import:
+    - keras
   requires:
     - pip
     - jax  # [not win]
