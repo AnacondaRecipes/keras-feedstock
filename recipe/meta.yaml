@@ -40,6 +40,13 @@ requirements:
 test:
   import:
     - keras
+    - keras.backend
+    - keras.datasets
+    - keras.engine
+    - keras.layers
+    - keras.preprocessing
+    - keras.utils
+    - keras.wrappers
   requires:
     - pip
     - jax  # [not win]
