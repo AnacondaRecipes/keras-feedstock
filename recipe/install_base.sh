@@ -1,5 +1,10 @@
 #!/bin/bash
 
+
+echo ~/.keras/keras.json
+cat ~/.keras/keras.json
+ls ~/.keras/keras.json
+
 # remove eventual leftover config (will set the backend)
 rm -f ~/.keras/keras.json
 
