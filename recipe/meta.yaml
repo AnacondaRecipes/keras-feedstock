@@ -72,13 +72,12 @@ about:
   license: MIT
   license_family: MIT
   license_file: LICENSE
-  summary: Deep Learning Library for Theano and TensorFlow
+  summary: Deep Learning for humans
   description: |
-    Keras is a minimalist, highly modular neural networks library
-    written in Python and capable on running on top of either
-    TensorFlow or Theano. It was developed with a focus on enabling
-    fast experimentation. Being able to go from idea to result with
-    the least possible delay is key to doing good research.
+    Keras 3 is a multi-backend deep learning framework, with support for JAX, 
+    TensorFlow, and PyTorch. Effortlessly build and train models for computer 
+    vision, natural language processing, audio processing, timeseries forecasting, 
+    recommender systems, etc.
   doc_url: https://keras.io/
   dev_url: https://github.com/fchollet/keras
 
