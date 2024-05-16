@@ -13,7 +13,11 @@ source:
 
 build:
   number: 0
-  script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-build-isolation -vvv
+  script: 
+    # remove eventual leftover config (will set the backend)
+    - rm -f ~/.keras/keras.json                # [not win]
+    - del %HOMEPATH%/.keras/keras.json 2> nul  # [win]
+    - {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-build-isolation -vvv
   # skipping s390x since dm-tree and jax are not available
   skip: true # [py<39 or s390x]
 
