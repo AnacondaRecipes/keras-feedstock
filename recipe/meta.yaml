@@ -15,13 +15,11 @@ build:
   number: 0
   script: 
     # remove eventual leftover config (will set the backend)
-    - echo ~/.keras/keras.json                 # [not win]
-    - ls ~/.keras/keras.json                   # [not win]
-    - rm -f ~/.keras/keras.json                # [not win]
-    - echo %HOMEPATH%/.keras/keras.json        # [win]
-    - dir %HOMEPATH%/.keras/keras.json         # [win]
-    - del %HOMEPATH%/.keras/keras.json 2> nul  # [win]
-    - {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-build-isolation -vvv
+    - rm -f ~/.keras/keras.json                # [osx]
+    - echo %UserProfile%\.keras\keras.json        # [win]
+    - dir %UserProfile%\.keras\keras.json         # [win]
+    - del %UserProfile%\.keras\keras.json 2> nul  # [win]
+    # - {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-build-isolation -vvv
   # skipping s390x since dm-tree and jax are not available
   skip: true # [py<39 or s390x]
 
