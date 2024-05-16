@@ -8,6 +8,8 @@ package:
 source:
   url: https://github.com/keras-team/keras/archive/refs/tags/v{{ version }}.tar.gz
   sha256: 0e23205f2d8f434ded17ca9efb116cdb7b6d19736e576456c28aea685a7f195f
+  patches:
+    - patches/0001-backend_torch.patch
 
 build:
   number: 0
@@ -16,6 +18,9 @@ build:
   skip: true # [py<39 or s390x]
 
 requirements:
+  build:
+    - patch #  [not win]
+    - m2-patch #  [win]
   host:
     - python
     - pip
@@ -42,11 +47,8 @@ test:
     - keras
     - keras.backend
     - keras.datasets
-    - keras.engine
     - keras.layers
-    - keras.preprocessing
     - keras.utils
-    - keras.wrappers
   requires:
     - pip
     - jax  # [not win]

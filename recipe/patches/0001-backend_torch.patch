@@ -1,0 +1,15 @@
+diff --git a/keras/backend/config.py b/keras/backend/config.py
+index 19af01fe8..15618cfe0 100644
+--- a/keras/backend/config.py
++++ b/keras/backend/config.py
+@@ -12,8 +12,8 @@ _EPSILON = 1e-7
+ # Default image data format, one of "channels_last", "channels_first".
+ _IMAGE_DATA_FORMAT = "channels_last"
+ 
+-# Default backend: TensorFlow.
+-_BACKEND = "tensorflow"
++# Default backend: pytorch.
++_BACKEND = "torch"
+ 
+ 
+ @keras_export(["keras.config.floatx", "keras.backend.floatx"])
