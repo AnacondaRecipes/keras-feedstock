@@ -14,7 +14,10 @@ source:
 build:
   number: 0
   script: 
-    # remove eventual leftover config (will set the backend)
+    # Remove eventual leftover config (will set the backend)
+    # linux instances do not have this problem because they
+    # are fresh every time.
+    # See: https://github.com/keras-team/keras/blob/v3.0.5/keras/backend/config.py#L199
     - rm -f ~/.keras/keras.json                   # [osx]
     - del %UserProfile%\.keras\keras.json 2> nul  # [win]
     - {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-build-isolation -v
