@@ -34,9 +34,8 @@ requirements:
     - rich
     - namex
     - h5py
-    - ml_dtypes
-    - packaging
     - dm-tree
+    - ml_dtypes
 
   run_constrained:
     - tensorflow >=2.15.0,<2.17.0a
@@ -66,8 +65,8 @@ test:
 
 about:
   home: https://github.com/fchollet/keras
-  license: MIT
-  license_family: MIT
+  license: Apache-2.0
+  license_family: Apache
   license_file: LICENSE
   summary: Deep Learning for humans
   description: |
