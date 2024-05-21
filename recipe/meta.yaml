@@ -11,6 +11,9 @@ source:
 
 build:
   script_env:
+    # The default backend is tensorflow, but for this version of keras
+    # we do not have the correct version. We update keras and would like
+    # to offer at least a working backend: torch.
     - KERAS_BACKEND=torch
   number: 0
   script:
@@ -56,6 +59,9 @@ test:
     - pytorch
   commands:
     - pip check
+    # numpy is checked as backend in exports and contest (pytest tests configuration)
+    # although not listed in the README among the backends. We add a quick test here.
+    #
     # numpy import jax in source code which causes test to fail for win
     - python -c "import os; os.environ['KERAS_BACKEND'] = 'numpy'; import keras;"  # [not win]
     - python -c "import os; os.environ['KERAS_BACKEND'] = 'jax'; import keras;"    # [not win]
