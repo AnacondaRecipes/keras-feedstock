@@ -36,7 +36,11 @@ requirements:
     - h5py
     - dm-tree
     - ml_dtypes
-
+    # this is not mentioned in the upstream until version 3.3.0
+    # but it might have been a bug, because it is indeed used
+    # in this version as well at:
+    # https://github.com/keras-team/keras/blob/v3.0.5/keras/utils/torch_utils.py#L3
+    - packaging
   run_constrained:
     - tensorflow >=2.15.0,<2.17.0a
     - jax 0.4.*
