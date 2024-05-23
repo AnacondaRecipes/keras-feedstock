@@ -42,9 +42,16 @@ requirements:
     # https://github.com/keras-team/keras/blob/v3.0.5/keras/utils/torch_utils.py#L3
     - packaging
   run_constrained:
-    - tensorflow >=2.15.0,<2.17.0a
-    - jax 0.4.*
-    - pytorch >=2.1,<2.3
+    # as suggested in https://keras.io/getting_started/#tensorflow-compatibility
+    # tensorflow pinning expands ~=2.16.1
+    - tensorflow >=2.16.1,<2.17.0a
+    # should be 0.4.20, but this will allow the jax[cuda] version to be installed (0.4.24)
+    - jax >=0.4.20, <0.5.0a
+    # pytorch should have >=2.1.0,<2.2.0 (expanding ~=2.1.0) but in 
+    # https://github.com/keras-team/keras/blob/v3.0.5/requirements.txt#L6
+    # https://github.com/keras-team/keras/blob/v3.0.5/keras/utils/torch_utils.py#L156
+    # a simple >=2.1.0 lower bound is used.
+    - pytorch >=2.1.0
 
 test:
   requires:
