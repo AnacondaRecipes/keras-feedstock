@@ -47,18 +47,25 @@ requirements:
     - pytorch >=2.1,<2.3
 
 test:
-  imports:
-    - keras
-    - keras.backend
-    - keras.datasets
-    - keras.layers
-    - keras.utils
   requires:
     - pip
     - jax  # [not win]
     - pytorch
   commands:
     - pip check
+    # the imports section is moved down here so that
+    # we can set the backend to torch (tensorflow is
+    # the default one, but not available at the moment
+    # with the right version)
+    - set KERAS_BACKEND=torch     # [win]
+    - export KERAS_BACKEND=torch  # [not win]
+    - python -c "import keras;"
+    - python -c "import keras.backend;"
+    - python -c "import keras.datasets;"
+    - python -c "import keras.layers;"
+    - python -c "import keras.utils;"
+    - set KERAS_BACKEND=     # [win]
+    - export KERAS_BACKEND=  # [not win]
     # numpy is checked as backend in exports and contest (pytest tests configuration)
     # although not listed in the README among the backends. We add a quick test here.
     #
@@ -88,3 +95,6 @@ extra:
     - croth1
     - ocefpaf
     - jjhelmus
+  skip-lints:
+    # The imports section is moved down to the commands
+    - missing_imports_or_run_test_py
