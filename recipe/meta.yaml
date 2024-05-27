@@ -1,113 +1,99 @@
-{% set version = "2.6.0" %}
+{% set name = "keras" %}
+{% set version = "3.0.5" %}
 
 package:
-  name: keras_split
+  name: keras
   version: {{ version }}
 
 source:
-  - url: https://pypi.io/packages/py2.py3/k/keras/keras-{{ version }}-py2.py3-none-any.whl
-    sha256: 504af5656a9829fe803ce48a8580ef16916e89906aceddad9e098614269437e7
-  - url: https://raw.githubusercontent.com/keras-team/keras/v{{ version }}/LICENSE
-    sha256: ebc07b279109d4bd5e58fe06f54e8f8aee8ba1024b77b222bc04214ae6f56348
+  url: https://github.com/keras-team/keras/archive/refs/tags/v{{ version }}.tar.gz
+  sha256: 0e23205f2d8f434ded17ca9efb116cdb7b6d19736e576456c28aea685a7f195f
 
 build:
-  noarch: python
+  script_env:
+    # The default backend is tensorflow, but for this version of keras
+    # we do not have the correct version. We update keras and would like
+    # to offer at least a working backend: torch.
+    - KERAS_BACKEND=torch
   number: 0
+  script:
+    - {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-build-isolation -v
+  # skipping s390x since dm-tree and jax are not available
+  skip: true  # [py<39 or s390x]
 
-outputs:
-  - name: keras-base
-    script: install_base.sh  # [not win]
-    script: install_base.bat  # [win]
-    build:
-      noarch: python
-    requirements:
-      host:
-        - python
-        - pip
-        - setuptools
-        - wheel
-      run:
-        - python >=3.6
-        - numpy >=1.9.1
-        - scipy >=0.14
-        - pyyaml
-        - h5py
-        - tensorflow {{ version }}  
-      # add run_constrained to prevent installation of mismatched keras and
-      # keras-base packages
-      run_constrained:
-        - keras {{ version }}
-    test:
-      requires:
-        - pip
-      commands:
-        - pip check
-      imports:
-        - keras
-        - keras.backend
-        - keras.datasets
-        - keras.engine
-        - keras.layers
-        - keras.preprocessing
-        - keras.utils
-        - keras.wrappers
- #some of the imports are commented out during testing to avoid circular dependencies
-  - name: keras
-    script: install_base.sh  # [not win]
-    script: install_base.bat  # [win]
-    build:
-      noarch: python
-    requirements:
-      host:
-        - python
-        - pip
-        - setuptools
-        - wheel
-      run:
-        - python >=3.6
-      run_constrained:
-        - tensorflow {{ version }}
-    test:
-      requires:
-        - pip
-      commands:
-        - pip check
-    about:
-      home: https://github.com/fchollet/keras
-      license: MIT
-      license_family: MIT
-      license_file: LICENSE
-      summary: Deep Learning Library for Theano and TensorFlow
-      description: |
-        Keras is a minimalist, highly modular neural networks library
-        written in Python and capable on running on top of either
-        TensorFlow or Theano. It was developed with a focus on enabling
-        fast experimentation. Being able to go from idea to result with
-        the least possible delay is key to doing good research.
-      doc_url: http://keras.io
-      dev_url: https://github.com/fchollet/keras
+requirements:
+  host:
+    - python
+    - pip
+    - wheel
+    - setuptools
+  run:
+    - python
+    - absl-py
+    - numpy
+    - rich
+    - namex
+    - h5py
+    - dm-tree
+    - ml_dtypes
+    # this is not mentioned in the upstream until version 3.3.0
+    # but it might have been a bug, because it is indeed used
+    # in this version as well at:
+    # https://github.com/keras-team/keras/blob/v3.0.5/keras/utils/torch_utils.py#L3
+    - packaging
+  run_constrained:
+    # as suggested in https://keras.io/getting_started/#tensorflow-compatibility
+    # tensorflow pinning expands ~=2.16.1
+    - tensorflow >=2.16.1,<2.17.0a
+    # should be 0.4.20, but this will allow the jax[cuda] version to be installed (0.4.24)
+    - jax >=0.4.20, <0.5.0a
+    # pytorch should have >=2.1.0,<2.2.0 (expanding ~=2.1.0) but in 
+    # https://github.com/keras-team/keras/blob/v3.0.5/requirements.txt#L6
+    # https://github.com/keras-team/keras/blob/v3.0.5/keras/utils/torch_utils.py#L156
+    # a simple >=2.1.0 lower bound is used.
+    - pytorch >=2.1.0
 
-  - name: keras-gpu
-    build:
-      noarch: true
-    requirements:
-      run:
-        - keras-base {{ version }}
-        - tensorflow-gpu
-    about:
-      home: https://github.com/fchollet/keras
-      license: MIT
-      license_family: MIT
-      license_file: LICENSE
-      summary: Deep Learning Library for Theano and TensorFlow
-      description: |
-        Keras is a minimalist, highly modular neural networks library
-        written in Python and capable on running on top of either
-        TensorFlow or Theano. It was developed with a focus on enabling
-        fast experimentation. Being able to go from idea to result with
-        the least possible delay is key to doing good research.
-      doc_url: http://keras.io
-      dev_url: https://github.com/fchollet/keras
+test:
+  requires:
+    - pip
+    - jax  # [not win]
+    - pytorch
+  commands:
+    - pip check
+    # the imports section is moved down here so that
+    # we can set the backend to torch (tensorflow is
+    # the default one, but not available at the moment
+    # with the right version)
+    - set KERAS_BACKEND=torch     # [win]
+    - export KERAS_BACKEND=torch  # [not win]
+    - python -c "import keras;"
+    - python -c "import keras.backend;"
+    - python -c "import keras.datasets;"
+    - python -c "import keras.layers;"
+    - python -c "import keras.utils;"
+    - set KERAS_BACKEND=     # [win]
+    - export KERAS_BACKEND=  # [not win]
+    # numpy is checked as backend in exports and contest (pytest tests configuration)
+    # although not listed in the README among the backends. We add a quick test here.
+    #
+    # numpy import jax in source code which causes test to fail for win
+    - python -c "import os; os.environ['KERAS_BACKEND'] = 'numpy'; import keras;"  # [not win]
+    - python -c "import os; os.environ['KERAS_BACKEND'] = 'jax'; import keras;"    # [not win]
+    - python -c "import os; os.environ['KERAS_BACKEND'] = 'torch'; import keras;"
+
+about:
+  home: https://github.com/fchollet/keras
+  license: Apache-2.0
+  license_family: Apache
+  license_file: LICENSE
+  summary: Deep Learning for humans
+  description: |
+    Keras 3 is a multi-backend deep learning framework, with support for JAX, 
+    TensorFlow, and PyTorch. Effortlessly build and train models for computer 
+    vision, natural language processing, audio processing, timeseries forecasting, 
+    recommender systems, etc.
+  doc_url: https://keras.io/
+  dev_url: https://github.com/fchollet/keras
 
 extra:
   recipe-maintainers:
@@ -116,3 +102,6 @@ extra:
     - croth1
     - ocefpaf
     - jjhelmus
+  skip-lints:
+    # The imports section is moved down to the commands
+    - missing_imports_or_run_test_py
