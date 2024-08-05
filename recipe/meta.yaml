@@ -18,6 +18,9 @@ build:
   skip: true  # [py<39]
 
 requirements:
+  build:
+    - m2-patch  # [win]
+    - patch     # [unix]
   host:
     - python
     - pip
@@ -46,7 +49,7 @@ requirements:
 test:
   requires:
     - pip
-    - jax  # [not win]
+    - jax  # [not (win or s390x)]
     - pytorch
   commands:
     - pip check
@@ -67,8 +70,8 @@ test:
     # although not listed in the README among the backends. We add a quick test here.
     #
     # numpy import jax in source code which causes test to fail for win
-    - python -c "import os; os.environ['KERAS_BACKEND'] = 'numpy'; import keras;"  # [not win]
-    - python -c "import os; os.environ['KERAS_BACKEND'] = 'jax'; import keras;"    # [not win]
+    - python -c "import os; os.environ['KERAS_BACKEND'] = 'numpy'; import keras;"  # [not (win or s390x)]
+    - python -c "import os; os.environ['KERAS_BACKEND'] = 'jax'; import keras;"    # [not (win or s390x)]
     - python -c "import os; os.environ['KERAS_BACKEND'] = 'torch'; import keras;"
 
 about:
