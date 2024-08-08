@@ -47,12 +47,24 @@ requirements:
     - torchvision >=0.16.0
 
 test:
+  source_files:
+    - conftest.py
+    - pyproject.toml
+    - integration_tests
   requires:
     - pip
     - jax  # [not (win or s390x)]
     - pytorch
+    - pytest
   commands:
     - pip check
+    # numpy is checked as backend in exports and contest (pytest tests configuration)
+    # although not listed in the README among the backends. We add a quick test here.
+    #
+    # numpy import jax in source code which causes test to fail for win
+    - python -c "import os; os.environ['KERAS_BACKEND'] = 'numpy'; import keras;"  # [not (win or s390x)]
+    - python -c "import os; os.environ['KERAS_BACKEND'] = 'jax'; import keras;"    # [not (win or s390x)]
+    - python -c "import os; os.environ['KERAS_BACKEND'] = 'torch'; import keras;"
     # the imports section is moved down here so that
     # we can set the backend to torch (tensorflow is
     # the default one, but not available at the moment
@@ -64,15 +76,9 @@ test:
     - python -c "import keras.datasets;"
     - python -c "import keras.layers;"
     - python -c "import keras.utils;"
+    - pytest integration_tests/torch_workflow_test.py
     - set KERAS_BACKEND=     # [win]
     - export KERAS_BACKEND=  # [not win]
-    # numpy is checked as backend in exports and contest (pytest tests configuration)
-    # although not listed in the README among the backends. We add a quick test here.
-    #
-    # numpy import jax in source code which causes test to fail for win
-    - python -c "import os; os.environ['KERAS_BACKEND'] = 'numpy'; import keras;"  # [not (win or s390x)]
-    - python -c "import os; os.environ['KERAS_BACKEND'] = 'jax'; import keras;"    # [not (win or s390x)]
-    - python -c "import os; os.environ['KERAS_BACKEND'] = 'torch'; import keras;"
 
 about:
   home: https://github.com/keras-team/keras
