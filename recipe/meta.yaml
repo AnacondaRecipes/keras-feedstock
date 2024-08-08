@@ -1,5 +1,5 @@
 {% set name = "keras" %}
-{% set version = "3.0.5" %}
+{% set version = "3.4.1" %}
 
 package:
   name: keras
@@ -7,21 +7,20 @@ package:
 
 source:
   url: https://github.com/keras-team/keras/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: 0e23205f2d8f434ded17ca9efb116cdb7b6d19736e576456c28aea685a7f195f
+  sha256: fc36516fe8eb807480948385bc1ec3b6ebc64fdd963b645ff763d6e30ad72f66
+  patches:
+    # https://github.com/keras-team/keras/pull/19956
+    - patches/19956_pytorch_2.3_compatibility.patch
 
 build:
-  script_env:
-    # The default backend is tensorflow, but for this version of keras
-    # we do not have the correct version. We update keras and would like
-    # to offer at least a working backend: torch.
-    - KERAS_BACKEND=torch
   number: 0
-  script:
-    - {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-build-isolation -v
-  # skipping s390x since dm-tree and jax are not available
-  skip: true  # [py<39 or s390x]
+  script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-build-isolation -v
+  skip: true  # [py<39]
 
 requirements:
+  build:
+    - m2-patch  # [win]
+    - patch     # [unix]
   host:
     - python
     - pip
@@ -34,32 +33,37 @@ requirements:
     - rich
     - namex
     - h5py
-    - dm-tree
+    - optree
     - ml_dtypes
-    # this is not mentioned in the upstream until version 3.3.0
-    # but it might have been a bug, because it is indeed used
-    # in this version as well at:
-    # https://github.com/keras-team/keras/blob/v3.0.5/keras/utils/torch_utils.py#L3
     - packaging
   run_constrained:
-    # as suggested in https://keras.io/getting_started/#tensorflow-compatibility
-    # tensorflow pinning expands ~=2.16.1
-    - tensorflow >=2.16.1,<2.17.0a
-    # should be 0.4.20, but this will allow the jax[cuda] version to be installed (0.4.24)
-    - jax >=0.4.20, <0.5.0a
-    # pytorch should have >=2.1.0,<2.2.0 (expanding ~=2.1.0) but in 
-    # https://github.com/keras-team/keras/blob/v3.0.5/requirements.txt#L6
-    # https://github.com/keras-team/keras/blob/v3.0.5/keras/utils/torch_utils.py#L156
-    # a simple >=2.1.0 lower bound is used.
+    # https://github.com/keras-team/keras/blob/v{{ version }}/requirements.txt
+    - tensorflow >=2.17.0,<3.0a
+    - jax >=0.4.23,<0.5.0a
+    # pytorch should have >=2.1.0,<2.3.0 (GitHub issue #19602)
+    # a simple >=2.1.0 lower bound is used with a patch.
     - pytorch >=2.1.0
+    - torchvision >=0.16.0
 
 test:
+  source_files:
+    - conftest.py
+    - pyproject.toml
+    - integration_tests
   requires:
     - pip
-    - jax  # [not win]
+    - jax  # [not (win or s390x)]
     - pytorch
+    - pytest
   commands:
     - pip check
+    # numpy is checked as backend in exports and contest (pytest tests configuration)
+    # although not listed in the README among the backends. We add a quick test here.
+    #
+    # numpy import jax in source code which causes test to fail for win
+    - python -c "import os; os.environ['KERAS_BACKEND'] = 'numpy'; import keras;"  # [not (win or s390x)]
+    - python -c "import os; os.environ['KERAS_BACKEND'] = 'jax'; import keras;"    # [not (win or s390x)]
+    - python -c "import os; os.environ['KERAS_BACKEND'] = 'torch'; import keras;"
     # the imports section is moved down here so that
     # we can set the backend to torch (tensorflow is
     # the default one, but not available at the moment
@@ -71,18 +75,12 @@ test:
     - python -c "import keras.datasets;"
     - python -c "import keras.layers;"
     - python -c "import keras.utils;"
+    - pytest integration_tests/torch_workflow_test.py
     - set KERAS_BACKEND=     # [win]
     - export KERAS_BACKEND=  # [not win]
-    # numpy is checked as backend in exports and contest (pytest tests configuration)
-    # although not listed in the README among the backends. We add a quick test here.
-    #
-    # numpy import jax in source code which causes test to fail for win
-    - python -c "import os; os.environ['KERAS_BACKEND'] = 'numpy'; import keras;"  # [not win]
-    - python -c "import os; os.environ['KERAS_BACKEND'] = 'jax'; import keras;"    # [not win]
-    - python -c "import os; os.environ['KERAS_BACKEND'] = 'torch'; import keras;"
 
 about:
-  home: https://github.com/fchollet/keras
+  home: https://github.com/keras-team/keras
   license: Apache-2.0
   license_family: Apache
   license_file: LICENSE
@@ -93,7 +91,7 @@ about:
     vision, natural language processing, audio processing, timeseries forecasting, 
     recommender systems, etc.
   doc_url: https://keras.io/
-  dev_url: https://github.com/fchollet/keras
+  dev_url: https://github.com/keras-team/keras
 
 extra:
   recipe-maintainers:
