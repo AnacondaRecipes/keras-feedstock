@@ -46,7 +46,7 @@ test:
     - integration_tests
   requires:
     - pip
-    - jax  # [not (win or s390x)]
+    - jax  # [not s390x]
     - pytorch
     - pytest
   commands:
@@ -55,8 +55,8 @@ test:
     # although not listed in the README among the backends. We add a quick test here.
     #
     # numpy import jax in source code which causes test to fail for win
-    - python -c "import os; os.environ['KERAS_BACKEND'] = 'numpy'; import keras;"  # [not (win or s390x)]
-    - python -c "import os; os.environ['KERAS_BACKEND'] = 'jax'; import keras;"    # [not (win or s390x)]
+    - python -c "import os; os.environ['KERAS_BACKEND'] = 'numpy'; import keras;"  # [not s390x]
+    - python -c "import os; os.environ['KERAS_BACKEND'] = 'jax'; import keras;"    # [not s390x]
     - python -c "import os; os.environ['KERAS_BACKEND'] = 'torch'; import keras;"
     # the imports section is moved down here so that
     # we can set the backend to torch (tensorflow is
