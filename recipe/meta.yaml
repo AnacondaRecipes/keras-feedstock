@@ -1,5 +1,5 @@
 {% set name = "keras" %}
-{% set version = "3.4.1" %}
+{% set version = "3.6.0" %}
 
 package:
   name: keras
@@ -7,10 +7,7 @@ package:
 
 source:
   url: https://github.com/keras-team/keras/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: fc36516fe8eb807480948385bc1ec3b6ebc64fdd963b645ff763d6e30ad72f66
-  patches:
-    # https://github.com/keras-team/keras/pull/19956
-    - patches/19956_pytorch_2.3_compatibility.patch
+  sha256: 474cc5755054a1dbc71c87655c001eb411ce149988e14b1a5dae375d35e0457d
 
 build:
   number: 0
@@ -18,9 +15,6 @@ build:
   skip: true  # [py<39]
 
 requirements:
-  build:
-    - m2-patch  # [win]
-    - patch     # [unix]
   host:
     - python
     - pip
@@ -39,7 +33,6 @@ requirements:
   run_constrained:
     # https://github.com/keras-team/keras/blob/v{{ version }}/requirements.txt
     - tensorflow >=2.17.0,<3.0a
-    - jax >=0.4.23,<0.5.0a
     # pytorch should have >=2.1.0,<2.3.0 (GitHub issue #19602)
     # a simple >=2.1.0 lower bound is used with a patch.
     - pytorch >=2.1.0
@@ -52,7 +45,7 @@ test:
     - integration_tests
   requires:
     - pip
-    - jax  # [not (win or s390x)]
+    - jax  # [not s390x]
     - pytorch
     - pytest
   commands:
@@ -61,8 +54,8 @@ test:
     # although not listed in the README among the backends. We add a quick test here.
     #
     # numpy import jax in source code which causes test to fail for win
-    - python -c "import os; os.environ['KERAS_BACKEND'] = 'numpy'; import keras;"  # [not (win or s390x)]
-    - python -c "import os; os.environ['KERAS_BACKEND'] = 'jax'; import keras;"    # [not (win or s390x)]
+    - python -c "import os; os.environ['KERAS_BACKEND'] = 'numpy'; import keras;"  # [not s390x]
+    - python -c "import os; os.environ['KERAS_BACKEND'] = 'jax'; import keras;"    # [not s390x]
     - python -c "import os; os.environ['KERAS_BACKEND'] = 'torch'; import keras;"
     # the imports section is moved down here so that
     # we can set the backend to torch (tensorflow is
