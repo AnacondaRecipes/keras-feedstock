@@ -1,25 +1,24 @@
 {% set name = "keras" %}
-{% set version = "3.6.0" %}
+{% set version = "3.11.2" %}
 
 package:
-  name: keras
+  name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://github.com/keras-team/keras/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: 474cc5755054a1dbc71c87655c001eb411ce149988e14b1a5dae375d35e0457d
+  url: https://github.com/{{ name }}-team/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
+  sha256: cc23944e30a7159777cce52e6fa9d6c793607ffbc3cfc281dbd20791321a2558
 
 build:
   number: 0
   script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-build-isolation -v
-  skip: true  # [py<39]
+  skip: true  # [py<310]
 
 requirements:
   host:
     - python
     - pip
-    - wheel
-    - setuptools
+    - setuptools >=61.0
   run:
     - python
     - absl-py
@@ -31,46 +30,23 @@ requirements:
     - ml_dtypes
     - packaging
   run_constrained:
-    # https://github.com/keras-team/keras/blob/v{{ version }}/requirements.txt
-    - tensorflow >=2.17.0,<3.0a
-    # pytorch should have >=2.1.0,<2.3.0 (GitHub issue #19602)
-    # a simple >=2.1.0 lower bound is used with a patch.
-    - pytorch >=2.1.0
-    - torchvision >=0.16.0
+    - tensorflow >=2.18.1,<3.0a
+    - pytorch >=2.6.0
 
 test:
+  script:
+    - run_test.sh # [unix]
+    - run_test.bat # [win]
   source_files:
-    - conftest.py
     - pyproject.toml
     - integration_tests
+    - keras
   requires:
     - pip
     - jax  # [not s390x]
+    - tensorflow
     - pytorch
     - pytest
-  commands:
-    - pip check
-    # numpy is checked as backend in exports and contest (pytest tests configuration)
-    # although not listed in the README among the backends. We add a quick test here.
-    #
-    # numpy import jax in source code which causes test to fail for win
-    - python -c "import os; os.environ['KERAS_BACKEND'] = 'numpy'; import keras;"  # [not s390x]
-    - python -c "import os; os.environ['KERAS_BACKEND'] = 'jax'; import keras;"    # [not s390x]
-    - python -c "import os; os.environ['KERAS_BACKEND'] = 'torch'; import keras;"
-    # the imports section is moved down here so that
-    # we can set the backend to torch (tensorflow is
-    # the default one, but not available at the moment
-    # with the right version)
-    - set KERAS_BACKEND=torch     # [win]
-    - export KERAS_BACKEND=torch  # [not win]
-    - python -c "import keras;"
-    - python -c "import keras.backend;"
-    - python -c "import keras.datasets;"
-    - python -c "import keras.layers;"
-    - python -c "import keras.utils;"
-    - pytest integration_tests/torch_workflow_test.py
-    - set KERAS_BACKEND=     # [win]
-    - export KERAS_BACKEND=  # [not win]
 
 about:
   home: https://github.com/keras-team/keras
