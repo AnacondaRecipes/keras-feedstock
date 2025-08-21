@@ -24,7 +24,12 @@ import_for_backend torch
 pytest integration_tests/torch_workflow_test.py
 python integration_tests/torch_custom_fit_test.py
 
-# TENSORFLOW BACKEND
-import_for_backend tensorflow
-python integration_tests/tf_distribute_training_test.py
-python integration_tests/tf_custom_fit_test.py
+# Check Python version before TensorFlow tests
+if python -c "import sys; exit(0 if sys.version_info < (3, 13) else 1)"; then
+    # TENSORFLOW BACKEND - Only for Python < 3.13
+    import_for_backend tensorflow
+    python integration_tests/tf_distribute_training_test.py
+    python integration_tests/tf_custom_fit_test.py
+else
+    echo "Skipping TensorFlow backend tests - Python 3.13+ detected"
+fi
