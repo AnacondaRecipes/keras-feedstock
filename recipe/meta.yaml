@@ -40,9 +40,7 @@ requirements:
     - onnxscript <=0.3.1
 
 test:
-  script:
-    - run_test.sh # [unix]
-    - run_test.bat # [win]
+  script: run_test.py
   source_files:
     - pyproject.toml
     - integration_tests
