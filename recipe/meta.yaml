@@ -31,7 +31,7 @@ requirements:
     - packaging
   run_constrained:
     # https://github.com/keras-team/keras/blob/v3.11.2/requirements.txt
-    - tensorflow-base >=2.18.1,<2.19.0
+    - tensorflow-base >=2.18.1
     # leaving as lower bounds for now as compatibility is not well documented, with conflicting bounds in requirements files.
     - pytorch >=2.6.0
     - jax >=0.5.0
@@ -50,7 +50,7 @@ test:
     - pip
     # Temporary disabled till jax will be updated
     # - jax  # [not s390x]
-    - tensorflow >=2.18.1,<2.19.0 # [py<313]
+    - tensorflow >=2.18.1 # [py<313]
     - pytorch
     - pytest
 
