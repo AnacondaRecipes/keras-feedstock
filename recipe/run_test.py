@@ -37,8 +37,6 @@ def import_for_backend(backend):
         sys.exit(1)
 
 def main():
-    run_command("pip check")
-    
     # Temporary commented, till jax will be updated 
     # JAX BACKEND
     # import_for_backend("jax")

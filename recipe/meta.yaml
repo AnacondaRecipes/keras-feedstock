@@ -53,6 +53,8 @@ test:
     - tensorflow >=2.18.1 # [py<313]
     - pytorch
     - pytest
+  command:
+    - pip check
 
 about:
   home: https://github.com/keras-team/keras
