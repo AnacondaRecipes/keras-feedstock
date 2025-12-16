@@ -1,5 +1,5 @@
 {% set name = "keras" %}
-{% set version = "3.11.2" %}
+{% set version = "3.12.0" %}
 
 package:
   name: {{ name|lower }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://github.com/{{ name }}-team/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: cc23944e30a7159777cce52e6fa9d6c793607ffbc3cfc281dbd20791321a2558
+  sha256: df510d7f83a9b62a538609a4b9c30a7eb86e65387e5ab19eda493d6b59748cc0
 
 build:
   number: 0
@@ -24,11 +24,12 @@ requirements:
     - absl-py
     - numpy
     - rich
-    - namex >=0.0.8
+    - namex
     - h5py
     - optree
     - ml_dtypes
     - packaging
+    - ml-dtypes
   run_constrained:
     # https://github.com/keras-team/keras/blob/v3.11.2/requirements.txt
     - tensorflow-base >=2.18.1
@@ -50,7 +51,7 @@ test:
     - pip
     # Temporary disabled till jax will be updated
     # - jax  # [not s390x]
-    - tensorflow >=2.18.1 # [py<313]
+    - tensorflow >=2.18.1  # [py<313]
     - pytorch
     - pytest
   commands:
@@ -63,9 +64,9 @@ about:
   license_file: LICENSE
   summary: Deep Learning for humans
   description: |
-    Keras 3 is a multi-backend deep learning framework, with support for JAX, 
-    TensorFlow, and PyTorch. Effortlessly build and train models for computer 
-    vision, natural language processing, audio processing, timeseries forecasting, 
+    Keras 3 is a multi-backend deep learning framework, with support for JAX,
+    TensorFlow, and PyTorch. Effortlessly build and train models for computer
+    vision, natural language processing, audio processing, timeseries forecasting,
     recommender systems, etc.
   doc_url: https://keras.io/
   dev_url: https://github.com/keras-team/keras
