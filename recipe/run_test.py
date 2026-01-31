@@ -37,20 +37,18 @@ def import_for_backend(backend):
         sys.exit(1)
 
 def main():
-    # TORCH BACKEND
-    import_for_backend("torch")
-    run_command("pytest integration_tests/torch_workflow_test.py")
-    run_command("python integration_tests/torch_custom_fit_test.py")
 
     # JAX BACKEND
     import_for_backend("jax")
     run_command("python integration_tests/jax_custom_fit_test.py")
 
+    # TORCH BACKEND
+    import_for_backend("torch")
+    run_command("pytest integration_tests/torch_workflow_test.py")
+    run_command("python integration_tests/torch_custom_fit_test.py")
+
     # TENSORFLOW BACKEND
     import_for_backend("tensorflow")
-    # ERROR: Flag 'leave_barriers_on_recoverable_agent_restart' was defined more than once but with differing types. Defined in files 
-    # 'external/local_xla/xla/tsl/distributed_runtime/coordination/coordination_service.cc' and 
-    # 'external/xla/xla/tsl/distributed_runtime/coordination/coordination_service.cc'.
     run_command("python integration_tests/tf_distribute_training_test.py")
     run_command("python integration_tests/tf_custom_fit_test.py")
 
