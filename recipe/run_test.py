@@ -37,24 +37,20 @@ def import_for_backend(backend):
         sys.exit(1)
 
 def main():
-    # Temporary commented, till jax will be updated 
+
     # JAX BACKEND
-    # import_for_backend("jax")
-    # run_command("python integration_tests/jax_custom_fit_test.py")
-    
+    import_for_backend("jax")
+    run_command("python integration_tests/jax_custom_fit_test.py")
+
     # TORCH BACKEND
     import_for_backend("torch")
     run_command("pytest integration_tests/torch_workflow_test.py")
     run_command("python integration_tests/torch_custom_fit_test.py")
-    
-    # Check Python version before TensorFlow tests
-    if sys.version_info < (3, 13):
-        # TENSORFLOW BACKEND - Only for Python < 3.13
-        import_for_backend("tensorflow")
-        run_command("python integration_tests/tf_distribute_training_test.py")
-        run_command("python integration_tests/tf_custom_fit_test.py")
-    else:
-        print("Skipping TensorFlow backend tests - Python 3.13+ detected")
+
+    # TENSORFLOW BACKEND
+    import_for_backend("tensorflow")
+    run_command("python integration_tests/tf_distribute_training_test.py")
+    run_command("python integration_tests/tf_custom_fit_test.py")
 
 if __name__ == "__main__":
     main()

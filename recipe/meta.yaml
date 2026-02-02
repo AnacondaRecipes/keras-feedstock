@@ -1,5 +1,5 @@
 {% set name = "keras" %}
-{% set version = "3.11.2" %}
+{% set version = "3.13.2" %}
 
 package:
   name: {{ name|lower }}
@@ -7,12 +7,12 @@ package:
 
 source:
   url: https://github.com/{{ name }}-team/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: cc23944e30a7159777cce52e6fa9d6c793607ffbc3cfc281dbd20791321a2558
+  sha256: 5e8456cac2eed0ae1ab50cde07e8f4d1a294ccb49860319c946265510659fd08
 
 build:
   number: 0
   script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-build-isolation -v
-  skip: true  # [py<310]
+  skip: true  # [py<311]
 
 requirements:
   host:
@@ -24,19 +24,23 @@ requirements:
     - absl-py
     - numpy
     - rich
-    - namex >=0.0.8
+    - namex
     - h5py
     - optree
     - ml_dtypes
     - packaging
   run_constrained:
-    # https://github.com/keras-team/keras/blob/v3.11.2/requirements.txt
-    - tensorflow-base >=2.18.1
+    # https://github.com/keras-team/keras/blob/v3.13.2/requirements.txt
+    - tensorflow-base >=2.20.0
     # leaving as lower bounds for now as compatibility is not well documented, with conflicting bounds in requirements files.
     - pytorch >=2.6.0
-    - jax >=0.5.0
-    # https://github.com/keras-team/keras/blob/v3.11.2/requirements-common.txt
-    - onnxscript <=0.3.1
+    # 0.7.2 is the latest available version that is compatible with other dependencies
+    - jax >=0.7.2
+    - flax >=0.12.1
+    # https://github.com/keras-team/keras/blob/v3.13.2/requirements-common.txt
+    - onnxscript !=0.3.2
+    # https://github.com/keras-team/keras/blob/v3.13.2/requirements.txt#L7C3-L7C55
+    - ai-edge-litert ==1.3.0
 
 test:
   source_files:
@@ -48,9 +52,8 @@ test:
     - keras.src
   requires:
     - pip
-    # Temporary disabled till jax will be updated
-    # - jax  # [not s390x]
-    - tensorflow >=2.18.1 # [py<313]
+    - jax
+    - tensorflow
     - pytorch
     - pytest
   commands:
@@ -63,11 +66,11 @@ about:
   license_file: LICENSE
   summary: Deep Learning for humans
   description: |
-    Keras 3 is a multi-backend deep learning framework, with support for JAX, 
-    TensorFlow, and PyTorch. Effortlessly build and train models for computer 
-    vision, natural language processing, audio processing, timeseries forecasting, 
+    Keras 3 is a multi-backend deep learning framework, with support for JAX,
+    TensorFlow, and PyTorch. Effortlessly build and train models for computer
+    vision, natural language processing, audio processing, timeseries forecasting,
     recommender systems, etc.
-  doc_url: https://keras.io/
+  doc_url: https://keras.io
   dev_url: https://github.com/keras-team/keras
 
 extra:
@@ -77,6 +80,3 @@ extra:
     - croth1
     - ocefpaf
     - jjhelmus
-  skip-lints:
-    # The imports section is moved down to the commands
-    - missing_imports_or_run_test_py
