@@ -1,5 +1,5 @@
 {% set name = "keras" %}
-{% set version = "3.12.0" %}
+{% set version = "3.12.1" %}
 
 package:
   name: {{ name|lower }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://github.com/{{ name }}-team/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: df510d7f83a9b62a538609a4b9c30a7eb86e65387e5ab19eda493d6b59748cc0
+  sha256: 263885259dde1a699b5c6fee1bc4d4f700b285677ab951b461043473d9f5c21e
 
 build:
   number: 0
