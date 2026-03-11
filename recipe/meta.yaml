@@ -29,7 +29,6 @@ requirements:
     - optree
     - ml_dtypes
     - packaging
-    - ml-dtypes
   run_constrained:
     # https://github.com/keras-team/keras/blob/v3.11.2/requirements.txt
     - tensorflow-base >=2.18.1
