@@ -1,5 +1,5 @@
 {% set name = "keras" %}
-{% set version = "3.13.2" %}
+{% set version = "3.14.0" %}
 
 package:
   name: {{ name|lower }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://github.com/{{ name }}-team/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: 5e8456cac2eed0ae1ab50cde07e8f4d1a294ccb49860319c946265510659fd08
+  sha256: 25b3dc0f156abe7b43c3586f7ec6583741da7ee3b3324bfcce43fe9ddc8be542
 
 build:
   number: 0
@@ -30,34 +30,39 @@ requirements:
     - ml_dtypes
     - packaging
   run_constrained:
-    # https://github.com/keras-team/keras/blob/v3.13.2/requirements.txt
+    # https://github.com/keras-team/keras/blob/v3.14.0/requirements.txt
     - tensorflow-base >=2.20.0
     # leaving as lower bounds for now as compatibility is not well documented, with conflicting bounds in requirements files.
     - pytorch >=2.6.0
     # 0.7.2 is the latest available version that is compatible with other dependencies
     - jax >=0.7.2
     - flax >=0.12.1
-    # https://github.com/keras-team/keras/blob/v3.13.2/requirements-common.txt
+    # https://github.com/keras-team/keras/blob/v3.14.0/requirements-common.txt
     - onnxscript !=0.3.2
-    # https://github.com/keras-team/keras/blob/v3.13.2/requirements.txt#L7C3-L7C55
-    - ai-edge-litert ==1.3.0
 
 test:
   source_files:
     - pyproject.toml
     - integration_tests
-  import:
-    - keras
-    - keras.api
-    - keras.src
   requires:
     - pip
     - jax
-    - tensorflow
+    - tensorflow # [py<314]
     - pytorch
     - pytest
   commands:
     - pip check
+    # JAX backend (set KERAS_BACKEND in Python so tests work on Windows cmd/PowerShell)
+    - python -c "import os; os.environ['KERAS_BACKEND']='jax'; import keras, keras.backend, keras.datasets, keras.layers, keras.utils"
+    - python -c "import os, sys, subprocess; os.environ['KERAS_BACKEND']='jax'; subprocess.check_call([sys.executable, 'integration_tests/jax_custom_fit_test.py'])"
+    # PyTorch backend
+    - python -c "import os; os.environ['KERAS_BACKEND']='torch'; import keras, keras.backend, keras.datasets, keras.layers, keras.utils"
+    - python -c "import os, sys, subprocess; os.environ['KERAS_BACKEND']='torch'; subprocess.check_call([sys.executable, '-m', 'pytest', 'integration_tests/torch_workflow_test.py'])"
+    - python -c "import os, sys, subprocess; os.environ['KERAS_BACKEND']='torch'; subprocess.check_call([sys.executable, 'integration_tests/torch_custom_fit_test.py'])"
+    # TensorFlow backend
+    - python -c "import os; os.environ['KERAS_BACKEND']='tensorflow'; import keras, keras.backend, keras.datasets, keras.layers, keras.utils"  # [py<314]
+    - python -c "import os, sys, subprocess; os.environ['KERAS_BACKEND']='tensorflow'; subprocess.check_call([sys.executable, 'integration_tests/tf_distribute_training_test.py'])"  # [py<314]
+    - python -c "import os, sys, subprocess; os.environ['KERAS_BACKEND']='tensorflow'; subprocess.check_call([sys.executable, 'integration_tests/tf_custom_fit_test.py'])"  # [py<314]
 
 about:
   home: https://github.com/keras-team/keras
@@ -74,6 +79,8 @@ about:
   dev_url: https://github.com/keras-team/keras
 
 extra:
+  skip-lints:
+    - missing_imports_or_run_test_py # import tests in commands section
   recipe-maintainers:
     - ericdill
     - mariusvniekerk
