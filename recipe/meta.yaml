@@ -1,13 +1,13 @@
 {% set name = "keras" %}
-{% set version = "3.14.0" %}
+{% set version = "3.15.0" %}
 
 package:
-  name: {{ name|lower }}
+  name: {{ name }}
   version: {{ version }}
 
 source:
   url: https://github.com/{{ name }}-team/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: 25b3dc0f156abe7b43c3586f7ec6583741da7ee3b3324bfcce43fe9ddc8be542
+  sha256: f3d236aef5d77d706ef9a2b5e1af9e0af4b319e81877c3b6506eadf4a28f2781
 
 build:
   number: 0
@@ -16,8 +16,9 @@ build:
 
 requirements:
   host:
-    - python
     - pip
+    - python
+    - wheel
     - setuptools >=61.0
   run:
     - python
@@ -30,14 +31,13 @@ requirements:
     - ml_dtypes
     - packaging
   run_constrained:
-    # https://github.com/keras-team/keras/blob/v3.14.0/requirements.txt
+    # https://github.com/keras-team/keras/blob/v3.15.0/requirements.txt
     - tensorflow-base >=2.20.0
     # leaving as lower bounds for now as compatibility is not well documented, with conflicting bounds in requirements files.
     - pytorch >=2.6.0
-    # 0.7.2 is the latest available version that is compatible with other dependencies
-    - jax >=0.7.2
-    - flax >=0.12.1
-    # https://github.com/keras-team/keras/blob/v3.14.0/requirements-common.txt
+    # 0.8.1 is the latest available version that is compatible with other dependencies
+    - jax >=0.8.1
+    # https://github.com/keras-team/keras/blob/v3.15.0/requirements-common.txt
     - onnxscript !=0.3.2
 
 test:
@@ -46,15 +46,16 @@ test:
     - integration_tests
   requires:
     - pip
-    - jax
-    - tensorflow # [py<314]
+    # To avoid ERROR: Flag 'leave_barriers_on_recoverable_agent_restart' was defined more than once but with differing types.
+    - jax  # [py==314]
+    - tensorflow-base  # [py<314]
     - pytorch
     - pytest
   commands:
     - pip check
     # JAX backend (set KERAS_BACKEND in Python so tests work on Windows cmd/PowerShell)
-    - python -c "import os; os.environ['KERAS_BACKEND']='jax'; import keras, keras.backend, keras.datasets, keras.layers, keras.utils"
-    - python -c "import os, sys, subprocess; os.environ['KERAS_BACKEND']='jax'; subprocess.check_call([sys.executable, 'integration_tests/jax_custom_fit_test.py'])"
+    - python -c "import os; os.environ['KERAS_BACKEND']='jax'; import keras, keras.backend, keras.datasets, keras.layers, keras.utils"  # [py==314]
+    - python -c "import os, sys, subprocess; os.environ['KERAS_BACKEND']='jax'; subprocess.check_call([sys.executable, 'integration_tests/jax_custom_fit_test.py'])"  # [py==314]
     # PyTorch backend
     - python -c "import os; os.environ['KERAS_BACKEND']='torch'; import keras, keras.backend, keras.datasets, keras.layers, keras.utils"
     - python -c "import os, sys, subprocess; os.environ['KERAS_BACKEND']='torch'; subprocess.check_call([sys.executable, '-m', 'pytest', 'integration_tests/torch_workflow_test.py'])"
