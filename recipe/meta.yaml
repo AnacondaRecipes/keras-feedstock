@@ -47,7 +47,9 @@ test:
   requires:
     - pip
     - jax
-    - tensorflow # [py<314]
+    - tensorflow  # [py<314]
+    # To avoid ERROR: Flag 'leave_barriers_on_recoverable_agent_restart' was defined more than once but with differing types.
+    - tensorflow-base  # [py<314]
     - pytorch
     - pytest
   commands:
