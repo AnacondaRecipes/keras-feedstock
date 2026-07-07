@@ -10,7 +10,7 @@ source:
   sha256: f3d236aef5d77d706ef9a2b5e1af9e0af4b319e81877c3b6506eadf4a28f2781
 
 build:
-  number: 0
+  number: 1
   script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-build-isolation -v
   skip: true  # [py<311]
 
@@ -46,16 +46,15 @@ test:
     - integration_tests
   requires:
     - pip
-    # To avoid ERROR: Flag 'leave_barriers_on_recoverable_agent_restart' was defined more than once but with differing types.
-    - jax  # [py==314]
+    - jax
     - tensorflow-base  # [py<314]
     - pytorch
     - pytest
   commands:
     - pip check
     # JAX backend (set KERAS_BACKEND in Python so tests work on Windows cmd/PowerShell)
-    - python -c "import os; os.environ['KERAS_BACKEND']='jax'; import keras, keras.backend, keras.datasets, keras.layers, keras.utils"  # [py==314]
-    - python -c "import os, sys, subprocess; os.environ['KERAS_BACKEND']='jax'; subprocess.check_call([sys.executable, 'integration_tests/jax_custom_fit_test.py'])"  # [py==314]
+    - python -c "import os; os.environ['KERAS_BACKEND']='jax'; import keras, keras.backend, keras.datasets, keras.layers, keras.utils"
+    - python -c "import os, sys, subprocess; os.environ['KERAS_BACKEND']='jax'; subprocess.check_call([sys.executable, 'integration_tests/jax_custom_fit_test.py'])"
     # PyTorch backend
     - python -c "import os; os.environ['KERAS_BACKEND']='torch'; import keras, keras.backend, keras.datasets, keras.layers, keras.utils"
     - python -c "import os, sys, subprocess; os.environ['KERAS_BACKEND']='torch'; subprocess.check_call([sys.executable, '-m', 'pytest', 'integration_tests/torch_workflow_test.py'])"
