@@ -1,5 +1,5 @@
 {% set name = "keras" %}
-{% set version = "3.15.0" %}
+{% set version = "3.15.1" %}
 
 package:
   name: {{ name }}
@@ -7,10 +7,10 @@ package:
 
 source:
   url: https://github.com/{{ name }}-team/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: f3d236aef5d77d706ef9a2b5e1af9e0af4b319e81877c3b6506eadf4a28f2781
+  sha256: 7577d21ca0231e38ace70c17decb94492631e2b159c59b43e39cdcc6e1495a5d
 
 build:
-  number: 1
+  number: 0
   script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-build-isolation -v
   skip: true  # [py<311]
 
@@ -18,7 +18,6 @@ requirements:
   host:
     - pip
     - python
-    - wheel
     - setuptools >=61.0
   run:
     - python
@@ -80,7 +79,7 @@ about:
 
 extra:
   skip-lints:
-    - missing_imports_or_run_test_py # import tests in commands section
+    - missing_imports_or_run_test_py  # import tests in commands section
   recipe-maintainers:
     - ericdill
     - mariusvniekerk
