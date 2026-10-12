@@ -1,5 +1,5 @@
 {% set name = "keras" %}
-{% set version = "3.15.0" %}
+{% set version = "3.15.1" %}
 
 package:
   name: {{ name }}
@@ -7,10 +7,10 @@ package:
 
 source:
   url: https://github.com/{{ name }}-team/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: f3d236aef5d77d706ef9a2b5e1af9e0af4b319e81877c3b6506eadf4a28f2781
+  sha256: 7577d21ca0231e38ace70c17decb94492631e2b159c59b43e39cdcc6e1495a5d
 
 build:
-  number: 1
+  number: 0
   script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-build-isolation -v
   skip: true  # [py<311]
 
@@ -31,13 +31,13 @@ requirements:
     - ml_dtypes
     - packaging
   run_constrained:
-    # https://github.com/keras-team/keras/blob/v3.15.0/requirements.txt
+    # https://github.com/keras-team/keras/blob/v3.15.1/requirements.txt
     - tensorflow-base >=2.20.0
     # leaving as lower bounds for now as compatibility is not well documented, with conflicting bounds in requirements files.
     - pytorch >=2.6.0
     # 0.8.1 is the latest available version that is compatible with other dependencies
     - jax >=0.8.1
-    # https://github.com/keras-team/keras/blob/v3.15.0/requirements-common.txt
+    # https://github.com/keras-team/keras/blob/v3.15.1/requirements-common.txt
     - onnxscript !=0.3.2
 
 test:
