@@ -18,7 +18,6 @@ requirements:
   host:
     - pip
     - python
-    - wheel
     - setuptools >=61.0
   run:
     - python
@@ -80,7 +79,7 @@ about:
 
 extra:
   skip-lints:
-    - missing_imports_or_run_test_py # import tests in commands section
+    - missing_imports_or_run_test_py  # import tests in commands section
   recipe-maintainers:
     - ericdill
     - mariusvniekerk
